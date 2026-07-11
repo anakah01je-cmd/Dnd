@@ -1,0 +1,81 @@
+{
+    "name": "Mute",
+    "level": 3,
+    "species": "Changeling",
+    "class_info": "Venomblade Rogue",
+    "base_stats": {
+        "STR": 8,
+        "DEX": 16,
+        "CON": 14,
+        "INT": 9,
+        "WIS": 14,
+        "CHA": 15
+    },
+    "skills": {
+        "Acrobatics": 1,
+        "Deception": 1,
+        "Insight": 1,
+        "Medicine": 1,
+        "Perception": 1,
+        "Sleight of Hand": 2,
+        "Stealth": 1,
+        "Nature": 0
+    },
+    "tool_proficiencies": {
+        "Poisoner's Kit": 1,
+        "Thieves' Tools": 1,
+        "Alchemist's Supplies": 1
+    },
+    "inventory": [
+        "Leather Armor",
+        "Light Crossbow",
+        "Dagger (x2)",
+        "Shortsword",
+        "Thieves' Tools",
+        "Poisoner's Kit",
+        "Alchemist's Supplies",
+        "Crossbow Bolts (20)",
+        "Basic Poison",
+        "Backpack",
+        "Miner's Pick",
+        "Shovel",
+        "Crowbar",
+        "Caltrops (20)",
+        "Ball Bearings (1,000)",
+        "Rope",
+        "Bell",
+        "Tinderbox",
+        "Hooded Lantern",
+        "Oil (Flasks)",
+        "Candles (10)",
+        "Waterskin",
+        "Rations",
+        "Bedroll",
+        "Torches",
+        "Healing Potion"
+    ],
+    "notes": "=== Allies & Organizations ===\n- Blackjack Mel / Queens Men\n\n=== Drakenheim Locations & Contacts ===\n\u00e2\u20ac\u00a2 Bark and Buzzard: Middle Pub\n\u00e2\u20ac\u00a2 Gilded Lilly: Posh bar\n\u00e2\u20ac\u00a2 Skull and Sword: - Blackjack Mel\n\u00e2\u20ac\u00a2 Slaughter Stone Square: Watch out for it\n\u00e2\u20ac\u00a2 Chapel of Ardena: Hannah the Flamekeeper, Orphelia Reid (High Flame Keeper)\n\u00e2\u20ac\u00a2 Crow and Sons Smith: Tobias Blacksmith\n\u00e2\u20ac\u00a2 Red Lion Inn: River (Amethyst Academy)\n\u00e2\u20ac\u00a2 Eventide Manor: Haunted House (elven women with child ghost story)\n\u00e2\u20ac\u00a2 Hooded Lanterns: Petra Lang, Captain Ansom Lang - watchtower",
+    "current_hp": 24,
+    "temp_hp": 0,
+    "hit_dice_spent": 0,
+    "bolts": 20,
+    "reagents": 0,
+    "prepared_poisons": {
+        "Adder's Kiss": 0,
+        "Nerve-Sever Toxin": 0
+    },
+    "conditions": [],
+    "ac": 15,
+    "speed": 30,
+    "concentrating": false,
+    "gp": 21,
+    "sp": 0,
+    "cp": 0,
+    "mastered_weapons": [],
+    "healing_potions": {
+        "Healing": 0,
+        "Greater Healing": 0,
+        "Superior Healing": 0,
+        "Supreme Healing": 0
+    }
+}
