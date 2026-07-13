@@ -30,31 +30,9 @@
         "Leather Armor",
         "Light Crossbow",
         "Dagger (x2)",
-        "Shortsword",
-        "Thieves' Tools",
-        "Poisoner's Kit",
-        "Alchemist's Supplies",
-        "Crossbow Bolts (20)",
-        "Basic Poison",
-        "Backpack",
-        "Miner's Pick",
-        "Shovel",
-        "Crowbar",
-        "Caltrops (20)",
-        "Ball Bearings (1,000)",
-        "Rope",
-        "Bell",
-        "Tinderbox",
-        "Hooded Lantern",
-        "Oil (Flasks)",
-        "Candles (10)",
-        "Waterskin",
-        "Rations",
-        "Bedroll",
-        "Torches",
-        "Healing Potion"
+        "Shortsword"
     ],
-    "notes": "=== Allies & Organizations ===\n- Blackjack Mel / Queens Men\n\n=== Drakenheim Locations & Contacts ===\n\u00e2\u20ac\u00a2 Bark and Buzzard: Middle Pub\n\u00e2\u20ac\u00a2 Gilded Lilly: Posh bar\n\u00e2\u20ac\u00a2 Skull and Sword: - Blackjack Mel\n\u00e2\u20ac\u00a2 Slaughter Stone Square: Watch out for it\n\u00e2\u20ac\u00a2 Chapel of Ardena: Hannah the Flamekeeper, Orphelia Reid (High Flame Keeper)\n\u00e2\u20ac\u00a2 Crow and Sons Smith: Tobias Blacksmith\n\u00e2\u20ac\u00a2 Red Lion Inn: River (Amethyst Academy)\n\u00e2\u20ac\u00a2 Eventide Manor: Haunted House (elven women with child ghost story)\n\u00e2\u20ac\u00a2 Hooded Lanterns: Petra Lang, Captain Ansom Lang - watchtower",
+    "notes": "",
     "current_hp": 24,
     "temp_hp": 0,
     "hit_dice_spent": 0,
@@ -77,5 +55,69 @@
         "Greater Healing": 0,
         "Superior Healing": 0,
         "Supreme Healing": 0
-    }
+    },
+    "factions": {
+        "Queens Men": {
+            "standing": 12,
+            "tier": "Trusted",
+            "notes": "Led by Blackjack Mel. Operating out of the Skull & Sword. Currently helping them secure local smuggling lines.",
+            "color": "#9C27B0"
+        },
+        "Hooded Lanterns": {
+            "standing": -4,
+            "tier": "Wary",
+            "notes": "Met Petra and Captain Ansom Lang at the watchtower. They don't appreciate rogue elements working for the Queens Men.",
+            "color": "#2E7D32"
+        },
+        "Amethyst Academy": {
+            "standing": 0,
+            "tier": "Neutral",
+            "notes": "Main contact is River at the Red Lion Inn. Keeping tabs on spellcasting reagents and strange alchemical anomalies.",
+            "color": "#1565C0"
+        }
+    },
+    "locations": [
+        {
+            "Name": "Skull & Sword",
+            "Danger": "Low",
+            "Controller": "Queens Men",
+            "Visited": false,
+            "Notes": "Safehouse pub. Blackjack Mel's headquarters."
+        },
+        {
+            "Name": "Slaughter Stone Square",
+            "Danger": "Extreme",
+            "Controller": "Monsters",
+            "Visited": false,
+            "Notes": "Watch out for rats and heavily mutated beasts."
+        },
+        {
+            "Name": "Eventide Manor",
+            "Danger": "High",
+            "Controller": "Unaligned",
+            "Visited": true,
+            "Notes": "Haunted ruins. Encountered an elven woman and child ghost story."
+        },
+        {
+            "Name": "Bark and Buzzard",
+            "Danger": "Medium",
+            "Controller": "Unaligned",
+            "Visited": true,
+            "Notes": "Middle-tier pub. Good place to fish for rumors."
+        },
+        {
+            "Name": "Gilded Lily",
+            "Danger": "Low",
+            "Controller": "Queens Men",
+            "Visited": true,
+            "Notes": "Posh establishment. High-class front for city operations."
+        },
+        {
+            "Name": "Chapel of Ardena",
+            "Danger": "Low",
+            "Controller": "Faithful",
+            "Visited": true,
+            "Notes": "Hannah the Flamekeeper and High Flame Keeper Orphelia Reid."
+        }
+    ]
 }

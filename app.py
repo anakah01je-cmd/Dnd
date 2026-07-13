@@ -69,7 +69,6 @@ with st.sidebar:
                 st.rerun()
 
     with st.expander("📊 Core Stats", expanded=True):
-        # --- NEW: Character Identity ---
         name = st.text_input("Name", value=mute.data.get("name", "Mute"))
         species = st.text_input("Species", value=mute.data.get("species", "Changeling"))
         class_info = st.text_input("Class", value=mute.data.get("class_info", "Venomblade Rogue"))
@@ -92,7 +91,6 @@ with st.sidebar:
         tools = mute.data.get("tool_proficiencies", {})
         st.write(", ".join([f"{t} (Expert)" if lvl==2 else t for t, lvl in tools.items()]) if tools else "None")
 
-        # Weapon Mastery Selection
         mastery_options = ["Dagger", "Shortsword", "Scimitar", "Rapier", "Shortbow", "Hand Crossbow", "Sickle"]
         current_mastery = mute.data.get("mastered_weapons", [])
         if mute.level >= 1:
@@ -101,7 +99,6 @@ with st.sidebar:
                 mute.data["mastered_weapons"] = new_mastery
                 mute.save_data()
 
-        # Coin Purse
         st.divider()
         st.markdown("💰 **Coins**")
         col_g, col_s, col_c = st.columns(3)
@@ -188,7 +185,6 @@ with st.sidebar:
     col_ins.metric("Insight", 10 + mute.get_skill_mod("Insight"))
     col_inv.metric("Investigation", 10 + mute.get_skill_mod("Investigation"))
 
-    # Download character JSON
     st.divider()
     st.download_button(
         label="📥 Download Character JSON",
@@ -198,7 +194,6 @@ with st.sidebar:
         use_container_width=True
     )
     
-    # --- NEW: Cloud Upload Button ---
     uploaded_file = st.file_uploader("📂 Upload Character JSON", type="json")
     if uploaded_file is not None:
         try:
@@ -257,7 +252,9 @@ with st.sidebar:
                     add_roll_to_history(f"**{skill}:** Rolled {res} ({mod:+}) = **{res+mod}**")
                 st.rerun()
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(["⚔️ Combat", "🧪 Alchemy", "📖 Journal", "📜 Features", "📜 Roll History"])
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    "⚔️ Combat", "🧪 Alchemy", "📖 Journal", "📜 Features", "📜 Roll History", "🗺️ Cartography & Influence"
+])
 
 with tab1:
     st.header("Combat Dashboard")
@@ -605,3 +602,188 @@ with tab5:
     st.caption("Last 20 rolls (chronological).")
     for i, log in enumerate(reversed(st.session_state.roll_history)):
         st.text(f"{len(st.session_state.roll_history) - i}. {log}")
+
+with tab6:
+    st.markdown(
+        """
+        <div style="background-color:#1e1e2e; padding:15px; border-radius:10px; border-left: 5px solid #ff5555; margin-bottom:20px;">
+            <h2 style="color:#ffffff; margin:0;">🗺️ City-State Influence & Cartography Ledger</h2>
+            <p style="color:#a6adc8; margin:5px 0 0 0; font-size:14px;">Track Mute's political sway, faction dynamic standings, and safe house sectors across the ruins.</p>
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
+    
+    col_fac, col_loc = st.columns([1, 1], gap="large")
+    
+    # ==========================================
+    # LEFT COLUMN: FACTION STANDING THEATRE
+    # ==========================================
+    with col_fac:
+        st.markdown("### 🏛️ Faction Network & Allegiances")
+        
+        factions = mute.data.get("factions", {})
+        
+        for f_name, f_info in factions.items():
+            standing = f_info.get("standing", 0)
+            norm_val = float((standing + 20) / 40)
+            color = f_info.get("color", "#ff5555")
+            
+            with st.container(border=True):
+                st.markdown(
+                    f"""
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 18px; font-weight: bold; color: {color};">⚔️ {f_name}</span>
+                        <span style="background-color: {color}22; color: {color}; padding: 3px 10px; border-radius: 12px; font-size: 12px; border: 1px solid {color}55; font-weight: bold;">
+                            {f_info.get('tier', 'Neutral').upper()}
+                        </span>
+                    </div>
+                    """, 
+                    unsafe_allow_html=True
+                )
+                
+                st.progress(norm_val, text=f"Dynamic Standing: {standing:+}")
+                
+                with st.expander("📝 Intelligence Notes & Adjustment", expanded=False):
+                    b_sub, b_add = st.columns(2)
+                    if b_sub.button(f"📉 Decrease {f_name} (-1)", use_container_width=True):
+                        f_info["standing"] = max(-20, standing - 1)
+                        if f_info["standing"] <= -10: f_info["tier"] = "Hostile"
+                        elif f_info["standing"] <= -4: f_info["tier"] = "Wary"
+                        elif f_info["standing"] <= 4: f_info["tier"] = "Neutral"
+                        elif f_info["standing"] <= 10: f_info["tier"] = "Trusted"
+                        else: f_info["tier"] = "Allied"
+                        mute.save_data()
+                        st.rerun()
+                        
+                    if b_add.button(f"📈 Increase {f_name} (+1)", use_container_width=True):
+                        f_info["standing"] = min(20, standing + 1)
+                        if f_info["standing"] <= -10: f_info["tier"] = "Hostile"
+                        elif f_info["standing"] <= -4: f_info["tier"] = "Wary"
+                        elif f_info["standing"] <= 4: f_info["tier"] = "Neutral"
+                        elif f_info["standing"] <= 10: f_info["tier"] = "Trusted"
+                        else: f_info["tier"] = "Allied"
+                        mute.save_data()
+                        st.rerun()
+                    
+                    updated_f_notes = st.text_area("Field Intelligence:", value=f_info.get("notes", ""), key=f"notes_{f_name}")
+                    if updated_f_notes != f_info.get("notes", ""):
+                        f_info["notes"] = updated_f_notes
+                        mute.save_data()
+    
+    # ==========================================
+    # RIGHT COLUMN: LOCATION CARDS & COMPASS
+    # ==========================================
+    with col_loc:
+        st.markdown("### 📍 Location Registry & Safehouses")
+        
+        loc_list = mute.data.get("locations", [])
+        total_discovered = len(loc_list)
+        visited_count = sum(1 for l in loc_list if l.get("Visited", False))
+        
+        stat_c1, stat_c2 = st.columns(2)
+        stat_c1.metric("Discovered Zones", total_discovered)
+        stat_c2.metric("Sectors Inspected", f"{visited_count} / {total_discovered}")
+        st.divider()
+        
+        search_query = st.text_input("🔍 Filter Sector Database...", "").lower()
+        
+        for idx, loc in enumerate(loc_list):
+            if search_query and search_query not in loc.get("Name", "").lower() and search_query not in loc.get("Controller", "").lower():
+                continue
+                
+            danger = loc.get("Danger", "Low")
+            danger_colors = {"Low": "#2E7D32", "Medium": "#F57C00", "High": "#D32F2F", "Extreme": "#7B1FA2"}
+            d_color = danger_colors.get(danger, "#7f8c8d")
+            
+            with st.container(border=True):
+                v_status = "🟢 Visited" if loc.get("Visited", False) else "⚪ Unexplored"
+                current_controller = loc.get('Controller', 'Unknown')
+                
+                st.markdown(
+                    f"""
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                        <strong style="font-size: 16px; color:#ffffff;">📍 {loc.get('Name', 'Unknown')}</strong>
+                        <span style="font-size: 12px; color: {d_color}; font-weight: bold; background-color: {d_color}22; padding: 2px 8px; border-radius: 4px; border: 1px solid {d_color}44;">
+                            {danger} Danger
+                        </span>
+                    </div>
+                    <div style="font-size: 13px; margin-bottom: 8px;">
+                        <span style="color:#a6adc8;">Controlled by:</span> <span style="color:#f5c2e7; font-weight:600;">{current_controller}</span>
+                        <span style="margin-left: 15px; color:#a6adc8;">Status:</span> <span style="color:#f9e2af;">{v_status}</span>
+                    </div>
+                    """, 
+                    unsafe_allow_html=True
+                )
+                
+                with st.expander("🛠️ Re-route Info / Inspect Notes", expanded=False):
+                    is_visited = st.checkbox("Sector Marked Visited", value=loc.get("Visited", False), key=f"vis_check_{idx}")
+                    
+                    c1, c2 = st.columns(2)
+                    new_danger = c1.selectbox("Update Threat Matrix:", ["Low", "Medium", "High", "Extreme"], index=["Low", "Medium", "High", "Extreme"].index(danger), key=f"dang_sel_{idx}")
+                    
+                    # --- DYNAMIC CONTROLLER DROPDOWN ---
+                    known_controllers = set(mute.data.get("factions", {}).keys())
+                    for l in loc_list: 
+                        known_controllers.add(l.get("Controller", "Unknown"))
+                    known_controllers.update(["Unknown", "Unaligned", "Monsters", "Faithful"])
+                    ctrl_options = sorted(list(known_controllers)) + ["➕ Add New..."]
+                    
+                    new_ctrl_selection = c2.selectbox(
+                        "Faction in Control:", 
+                        ctrl_options, 
+                        index=ctrl_options.index(current_controller) if current_controller in ctrl_options else 0, 
+                        key=f"ctrl_sel_{idx}"
+                    )
+                    
+                    final_ctrl = new_ctrl_selection
+                    if new_ctrl_selection == "➕ Add New...":
+                        final_ctrl = st.text_input("Enter New Faction/Controller:", key=f"new_ctrl_txt_{idx}")
+                        if not final_ctrl: 
+                            final_ctrl = current_controller
+
+                    updated_l_notes = st.text_area("Logbook Entries:", value=loc.get("Notes", ""), key=f"loc_notes_{idx}")
+                    
+                    # If anything changes, save and rerun to update the UI badge immediately
+                    if (is_visited != loc.get("Visited", False) or 
+                        new_danger != danger or 
+                        updated_l_notes != loc.get("Notes", "") or 
+                        (final_ctrl != current_controller and final_ctrl != "➕ Add New...")):
+                        
+                        loc["Visited"] = is_visited
+                        loc["Danger"] = new_danger
+                        loc["Notes"] = updated_l_notes
+                        loc["Controller"] = final_ctrl
+                        mute.save_data()
+                        st.rerun()
+                        
+        st.markdown("---")
+        with st.expander("➕ Chart Unmapped Sector Location"):
+            with st.form("add_location_form", clear_on_submit=True):
+                nl_name = st.text_input("Zone Name:")
+                nl_danger = st.selectbox("Danger Severity Matrix:", ["Low", "Medium", "High", "Extreme"])
+                
+                form_controllers = set(mute.data.get("factions", {}).keys())
+                for l in loc_list: form_controllers.add(l.get("Controller", "Unknown"))
+                form_controllers.update(["Unknown", "Unaligned", "Monsters", "Faithful"])
+                form_options = sorted(list(form_controllers)) + ["➕ Add New..."]
+                
+                nl_control_sel = st.selectbox("Faction in Control:", form_options, index=form_options.index("Unaligned") if "Unaligned" in form_options else 0)
+                nl_control_custom = st.text_input("If 'Add New...', specify here:")
+                
+                nl_notes = st.text_area("Initial Survey Reports / Recon:")
+                
+                if st.form_submit_button("💾 Commit Blueprint to Archive"):
+                    if nl_name:
+                        final_nl_control = nl_control_custom if nl_control_sel == "➕ Add New..." and nl_control_custom else (nl_control_sel if nl_control_sel != "➕ Add New..." else "Unknown")
+                        new_entry = {
+                            "Name": nl_name,
+                            "Danger": nl_danger,
+                            "Controller": final_nl_control,
+                            "Visited": True,
+                            "Notes": nl_notes
+                        }
+                        mute.data.setdefault("locations", []).append(new_entry)
+                        mute.save_data()
+                        st.toast(f"Sector mapped successfully: {nl_name}")
+                        st.rerun()
