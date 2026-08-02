@@ -38,7 +38,8 @@ class Character:
                 "current_hp": 0, "temp_hp": 0, "hit_dice_spent": 0,
                 "bolts": 20, "reagents": 2, "prepared_poisons": {}, "conditions": [],
                 "gp": 0, "sp": 0, "cp": 0, "mastered_weapons": [],
-                "ac": 12, "speed": 30, "concentrating": False, "healing_potions": {}
+                "ac": 12, "speed": 30, "concentrating": False, "healing_potions": {},
+                "allies": [], "exhaustion": 0, "death_saves": {"successes": 0, "failures": 0}
             }
             self.stats = self.data["base_stats"]
             self.level = self.data["level"]
@@ -68,6 +69,9 @@ class Character:
             self.data["healing_potions"] = {
                 "Healing": 0, "Greater Healing": 0, "Superior Healing": 0, "Supreme Healing": 0
             }
+        if "allies" not in self.data: self.data["allies"] = []
+        if "exhaustion" not in self.data: self.data["exhaustion"] = 0
+        if "death_saves" not in self.data: self.data["death_saves"] = {"successes": 0, "failures": 0}
 
     def save_data(self):
         """Writes all current data states back to the JSON file to prevent data loss."""
@@ -97,8 +101,18 @@ class Character:
         return (self.level + 1) // 2
 
     @property
+    def exhaustion_penalty(self):
+        """2024 rules: each exhaustion level imposes a cumulative -2 penalty
+        on D20 Tests (ability checks, attack rolls, saving throws)."""
+        return -2 * self.data.get("exhaustion", 0)
+
+    @property
     def to_hit_mod(self):
-        return self.get_mod("DEX") + self.proficiency_bonus
+        return self.get_mod("DEX") + self.proficiency_bonus + self.exhaustion_penalty
+
+    @property
+    def initiative_mod(self):
+        return self.get_mod("DEX") + 2 + self.exhaustion_penalty  # +2 from the Alert feat
 
     @property
     def damage_mod(self):
@@ -123,13 +137,13 @@ class Character:
             
         if is_proficient:
             mod += self.proficiency_bonus
-        return mod
+        return mod + self.exhaustion_penalty
 
     def get_skill_mod(self, skill_name):
         stat = self.SKILL_ATTRIBUTES.get(skill_name, "DEX")
         mod = self.get_mod(stat)
         prof_level = self.data.get("skills", {}).get(skill_name, 0) 
-        return mod + (self.proficiency_bonus * prof_level)
+        return mod + (self.proficiency_bonus * prof_level) + self.exhaustion_penalty
 
     def level_up(self):
         self.level += 1
@@ -143,6 +157,9 @@ class Character:
 
     def increase_stat(self, stat_name):
         if self.data.get("asi_points", 0) > 0:
+            current_score = self.data["base_stats"].get(stat_name, 10)
+            if current_score >= 20:
+                return  # Ability scores cannot be raised above 20
             self.data["base_stats"][stat_name] += 1
             self.data["asi_points"] -= 1
             self.save_data()

@@ -34,9 +34,11 @@ class CombatEngine:
         else:
             sa_dmg = roll(f"{net_dice}d6")
             log += f"**Sneak Attack:** +{sa_dmg} Damage"
-            
-        if is_poisoned and avt_dice_str != "0d6":
-            avt_dmg = roll(avt_dice_str)
-            log += f" | 🐍 **Adv. Venom Techniques:** +{avt_dmg} Poison Damage"
-            
+
+            # Advanced Venom Techniques only triggers when Sneak Attack damage
+            # is actually dealt, so it must live inside this branch.
+            if is_poisoned and avt_dice_str != "0d6":
+                avt_dmg = roll(avt_dice_str)
+                log += f" | 🐍 **Adv. Venom Techniques:** +{avt_dmg} Poison Damage"
+
         return log

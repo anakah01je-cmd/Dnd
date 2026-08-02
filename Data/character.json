@@ -119,5 +119,31 @@
             "Visited": true,
             "Notes": "Hannah the Flamekeeper and High Flame Keeper Orphelia Reid."
         }
+    ],
+    "allies": [
+        {
+            "name": "Jamie",
+            "class_info": "Fire Bender",
+            "ac": 10,
+            "hp_max": 10,
+            "hp_current": 10,
+            "notes": ""
+        },
+        {
+            "name": "Dan",
+            "class_info": "Barbarian",
+            "ac": 18,
+            "hp_max": 30,
+            "hp_current": 30,
+            "notes": ""
+        },
+        {
+            "name": "Tim",
+            "class_info": "Cleric",
+            "ac": 16,
+            "hp_max": 26,
+            "hp_current": 26,
+            "notes": ""
+        }
     ]
 }
